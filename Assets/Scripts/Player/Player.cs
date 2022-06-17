@@ -6,6 +6,8 @@ using DG.Tweening;
 public class Player : MonoBehaviour
 {
     public Rigidbody2D myRigidbody;
+    public HealthBase healthBase;
+
 
     [Header("Speed setup")]
     public Vector2 friction = new Vector2(.1f,0);
@@ -22,15 +24,33 @@ public class Player : MonoBehaviour
 
     [Header("Animation player")]
     public string boolRun = "Run";
+    public string triggerDeath = "Death";
     public Animator animator;
     public float playerSwipeDuration = .1f;
 
     private float _currentSpeed;
 
+    private float playerDirectionX;
+
+    private void Awake()
+    {
+        if(healthBase != null)
+        {
+            healthBase.OnKill += OnPlayerKill;
+        }
+    }
+
+    private void OnPlayerKill()
+    {
+        healthBase.OnKill -= OnPlayerKill;
+
+        animator.SetTrigger(triggerDeath);
+    }
+
     private void Update()
     {
-        HandleJump();
         HandleMovement();
+        HandleJump();
     }
 
     private void HandleMovement()
@@ -43,26 +63,38 @@ public class Player : MonoBehaviour
         else
         {
             _currentSpeed = speed;
-            animator.speed = 1;
+            animator.speed = 1; 
         }
 
         if (Input.GetKey(KeyCode.LeftArrow))
         {
             myRigidbody.velocity = new Vector2(-_currentSpeed, myRigidbody.velocity.y);
-            if (myRigidbody.transform.localScale.x != -1)
+            /*if (myRigidbody.transform.localScale.x != -1)
             {
                 myRigidbody.transform.DOScaleX(-1, playerSwipeDuration);
-            }
+            }*/
+
+            var lS = myRigidbody.transform.localScale;
+            lS.x = -1;
+            myRigidbody.transform.localScale = lS;
+
             animator.SetBool(boolRun, true);
+            playerDirectionX = -1;
         }
         else if (Input.GetKey(KeyCode.RightArrow))
         {
             myRigidbody.velocity = new Vector2(_currentSpeed, myRigidbody.velocity.y);
-            if (myRigidbody.transform.localScale.x != 1)
+            /*if (myRigidbody.transform.localScale.x != 1)
             {
                 myRigidbody.transform.DOScaleX(1, playerSwipeDuration);
-            }
+            }*/
+
+            var lS = myRigidbody.transform.localScale;
+            lS.x = 1;
+            myRigidbody.transform.localScale = lS;
+
             animator.SetBool(boolRun, true);
+            playerDirectionX = 1;
         }
         else
         {
@@ -95,6 +127,27 @@ public class Player : MonoBehaviour
     private void HandleScaleJump()
     {
         myRigidbody.transform.DOScaleY(jumpScaleY, animationDuration).SetLoops(2, LoopType.Yoyo).SetEase(ease);
-        myRigidbody.transform.DOScaleX(jumpScaleX, animationDuration).SetLoops(2, LoopType.Yoyo).SetEase(ease);
+        //myRigidbody.transform.DOScaleX(jumpScaleX, animationDuration).SetLoops(2, LoopType.Yoyo).SetEase(ease);
+
+        DOTween.To(XScaleGetter, XScaleSetter, jumpScaleX, animationDuration).SetLoops(2, LoopType.Yoyo).SetEase(ease);
+    }
+
+    private float XScaleGetter()
+    {
+        return Mathf.Abs(myRigidbody.transform.localScale.x);
+    }
+
+    private void XScaleSetter(float value)
+    {
+        Vector3 localScale = myRigidbody.transform.localScale;
+
+        localScale.x = value * playerDirectionX;
+
+        myRigidbody.transform.localScale = localScale;
+    }
+
+    public void DestroyMe()
+    {
+        Destroy(gameObject);
     }
 }
