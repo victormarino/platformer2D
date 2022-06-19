@@ -8,27 +8,14 @@ public class Player : MonoBehaviour
     public Rigidbody2D myRigidbody;
     public HealthBase healthBase;
 
+    [Header("Setup")]
+    public SOPlayerSetup soPlayerSetup;
 
-    [Header("Speed setup")]
-    public Vector2 friction = new Vector2(.1f,0);
-    public float speed;
-    public float speedRun;
-    public float forceJump = 2;
-
-    [Header("Animation setup")]
-
-    public float jumpScaleY = 1.5f;
-    public float jumpScaleX = 0.7f;
-    public float animationDuration = .3f;
-    public Ease ease = Ease.OutBack;
-
-    [Header("Animation player")]
-    public string boolRun = "Run";
-    public string triggerDeath = "Death";
-    public Animator animator;
-    public float playerSwipeDuration = .1f;
+    //public Animator animator;
 
     private float _currentSpeed;
+
+    private Animator _currentPlayer;
 
     private float playerDirectionX;
 
@@ -38,13 +25,15 @@ public class Player : MonoBehaviour
         {
             healthBase.OnKill += OnPlayerKill;
         }
+
+        _currentPlayer = Instantiate(soPlayerSetup.player, transform);
     }
 
     private void OnPlayerKill()
     {
         healthBase.OnKill -= OnPlayerKill;
 
-        animator.SetTrigger(triggerDeath);
+        _currentPlayer.SetTrigger(soPlayerSetup.triggerDeath);
     }
 
     private void Update()
@@ -57,13 +46,13 @@ public class Player : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.LeftControl))
         {
-            _currentSpeed = speedRun;
-            animator.speed = 2;
+            _currentSpeed = soPlayerSetup.speedRun;
+            _currentPlayer.speed = 2;
         }
         else
         {
-            _currentSpeed = speed;
-            animator.speed = 1; 
+            _currentSpeed = soPlayerSetup.speed;
+            _currentPlayer.speed = 1; 
         }
 
         if (Input.GetKey(KeyCode.LeftArrow))
@@ -78,7 +67,7 @@ public class Player : MonoBehaviour
             lS.x = -1;
             myRigidbody.transform.localScale = lS;
 
-            animator.SetBool(boolRun, true);
+            _currentPlayer.SetBool(soPlayerSetup.boolRun, true);
             playerDirectionX = -1;
         }
         else if (Input.GetKey(KeyCode.RightArrow))
@@ -93,21 +82,21 @@ public class Player : MonoBehaviour
             lS.x = 1;
             myRigidbody.transform.localScale = lS;
 
-            animator.SetBool(boolRun, true);
+            _currentPlayer.SetBool(soPlayerSetup.boolRun, true);
             playerDirectionX = 1;
         }
         else
         {
-            animator.SetBool(boolRun, false);
+            _currentPlayer.SetBool(soPlayerSetup.boolRun, false);
         }
 
         if (myRigidbody.velocity.x > 0)
         {
-            myRigidbody.velocity += friction;
+            myRigidbody.velocity += soPlayerSetup.friction;
         }
         else if (myRigidbody.velocity.x < 0)
         {
-            myRigidbody.velocity -= friction;
+            myRigidbody.velocity -= soPlayerSetup.friction;
         }
     }
 
@@ -115,7 +104,7 @@ public class Player : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            myRigidbody.velocity = Vector2.up * forceJump;
+            myRigidbody.velocity = Vector2.up * soPlayerSetup.forceJump;
             myRigidbody.transform.localScale = Vector2.one;
 
             DOTween.Kill(myRigidbody.transform);
@@ -126,10 +115,10 @@ public class Player : MonoBehaviour
 
     private void HandleScaleJump()
     {
-        myRigidbody.transform.DOScaleY(jumpScaleY, animationDuration).SetLoops(2, LoopType.Yoyo).SetEase(ease);
+        myRigidbody.transform.DOScaleY(soPlayerSetup.jumpScaleY, soPlayerSetup.animationDuration).SetLoops(2, LoopType.Yoyo).SetEase(soPlayerSetup.ease);
         //myRigidbody.transform.DOScaleX(jumpScaleX, animationDuration).SetLoops(2, LoopType.Yoyo).SetEase(ease);
 
-        DOTween.To(XScaleGetter, XScaleSetter, jumpScaleX, animationDuration).SetLoops(2, LoopType.Yoyo).SetEase(ease);
+        DOTween.To(XScaleGetter, XScaleSetter, soPlayerSetup.jumpScaleX, soPlayerSetup.animationDuration).SetLoops(2, LoopType.Yoyo).SetEase(soPlayerSetup.ease);
     }
 
     private float XScaleGetter()
