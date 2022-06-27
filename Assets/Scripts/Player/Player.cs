@@ -17,7 +17,7 @@ public class Player : MonoBehaviour
 
     private Animator _currentPlayer;
 
-    private float playerDirectionX;
+    private float playerDirectionX = 1;
 
     private void Awake()
     {
