@@ -27,6 +27,19 @@ public class Player : MonoBehaviour
         }
 
         _currentPlayer = Instantiate(soPlayerSetup.player, transform);
+
+        PlayerDestroyHelper playerDestroyHelper = _currentPlayer.GetComponentInChildren<PlayerDestroyHelper>();
+        if (playerDestroyHelper != null)
+        {
+            playerDestroyHelper.player = this;
+        }
+
+        GunBase gunBase = _currentPlayer.GetComponentInChildren<GunBase>();
+        if (gunBase != null)
+        {
+            gunBase.playerSideReference = transform;
+        }
+
     }
 
     private void OnPlayerKill()
