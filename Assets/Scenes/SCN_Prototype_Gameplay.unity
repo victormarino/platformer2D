@@ -1968,6 +1968,11 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!198 &631263084 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 3065187978931225604, guid: c776179007b39b546a1181f43f46f0da, type: 3}
+  m_PrefabInstance: {fileID: 4887053043326080214}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &669759694
 GameObject:
   m_ObjectHideFlags: 0
@@ -10565,7 +10570,7 @@ PrefabInstance:
     - target: {fileID: 8248025564386472271, guid: c776179007b39b546a1181f43f46f0da, type: 3}
       propertyPath: particleSystem
       value: 
-      objectReference: {fileID: 7309777553878191507, guid: 841a6e8936304a24d8352e3ece4e72a6, type: 3}
+      objectReference: {fileID: 631263084}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c776179007b39b546a1181f43f46f0da, type: 3}
 --- !u!1 &7621646570012333622

@@ -21,6 +21,8 @@ public class VFXManager : Singleton<VFXManager>
             {
                 var item = Instantiate(i.prefab);
                 item.transform.position = position;
+                ParticleSystem p = item.GetComponent<ParticleSystem>();
+                p.Play();
                 Destroy(item.gameObject, 3f);
                 break;
             }
